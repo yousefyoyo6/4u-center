@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>4U | إدارة الطلاب والمدرسين</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    font-family:Cairo,sans-serif;
+    background:#f5f7fb;
+    color:#0f172a
+}
+
+.sidebar{
+    background:linear-gradient(180deg,#07101f,#111c32)
+}
+
+.nav{
+    transition:.2s
+}
+
+.nav:hover{
+    background:#ffffff10
+}
+
+.nav.active{
+    background:#2563eb;
+    color:white;
+    box-shadow:0 10px 30px #2563eb55
+}
+
+.card{
+    background:white;
+    border:1px solid #e7edf6;
+    border-radius:22px;
+    box-shadow:0 8px 30px #0f172a0a
+}
+
+.badge{
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:800;
+    display:inline-block
+}
+
+.firebase-status{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:11px;
+    font-weight:800;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#ecfdf5;
+    color:#059669;
+    white-space:nowrap
+}
+
+.firebase-status.error{
+    background:#fef2f2;
+    color:#dc2626
+}
+
+.firebase-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#10b981
+}
+
+.firebase-status.error .firebase-dot{
+    background:#ef4444
+}
+
+.action-btn{
+    transition:.2s
+}
+
+.action-btn:hover{
+    transform:translateY(-1px)
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        position:fixed;
+        right:-280px;
+        top:0;
+        height:100vh;
+        width:270px;
+        z-index:50;
+        transition:.25s
+    }
+
+    .sidebar.open{
+        right:0
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="min-h-screen flex">
+
+<aside id="side" class="sidebar w-72 p-5 text-slate-300 shrink-0">
+
+    <div class="mb-10">
+
+        <div class="text-white text-3xl font-black italic">
+            4U
+        </div>
+
+        <div class="text-blue-400 text-[10px] tracking-[.3em] font-bold">
+            CENTER MANAGEMENT
+        </div>
+
+    </div>
+
+    <nav class="space-y-2">
+
+        <button
+            class="nav active w-full text-right p-3 rounded-xl font-bold"
+            data-v="students"
+            onclick="setView('students')">
+
+            <i class="fa-solid fa-user-graduate ml-3"></i>
+            الطلاب
+
+        </button>
+
+        <button
+            class="nav w-full text-right p-3 rounded-xl font-bold"
+            data-v="teachers"
+            onclick="setView('teachers')">
+
+            <i class="fa-solid fa-chalkboard-user ml-3"></i>
+            المدرسون
+
+        </button>
+
+        <button
+            class="nav w-full text-right p-3 rounded-xl font-bold"
+            data-v="attendance"
+            onclick="setView('attendance')">
+
+            <i class="fa-solid fa-calendar-check ml-3"></i>
+            الغياب والحضور
+
+        </button>
+
+        <button
+            class="nav w-full text-right p-3 rounded-xl font-bold"
+            data-v="payments"
+            onclick="setView('payments')">
+
+            <i class="fa-solid fa-money-bill-wave ml-3"></i>
+            فلوس الشهر
+
+        </button>
+
+    </nav>
+
+</aside>
+
+
+<main class="flex-1 min-w-0">
+
+<header class="bg-white border-b px-5 md:px-8 py-4 flex items-center gap-4 sticky top-0 z-20">
+
+    <button
+        class="md:hidden text-xl"
+        onclick="document.getElementById('side').classList.toggle('open')">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+
+    <div class="flex-1">
+
+        <h1 id="title" class="font-black text-xl">
+            إدارة الطلاب
+        </h1>
+
+        <p class="text-xs text-slate-400">
+            نظام مبسط لإدارة السنتر
+        </p>
+
+    </div>
+
+    <div id="firebaseStatus" class="firebase-status">
+
+        <span class="firebase-dot"></span>
+
+        <span id="firebaseStatusText">
+            جاري الاتصال...
+        </span>
+
+    </div>
+
+    <button
+        id="mainAdd"
+        onclick="addStudent()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold transition">
+
+        <i class="fa-solid fa-plus ml-2"></i>
+        إضافة طالب
+
+    </button>
+
+</header>
+
+
+<section id="content" class="p-5 md:p-8"></section>
+
+</main>
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    get,
+    set,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+/* =========================
+   Firebase
+========================= */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCyhPyQKnDYsjOonkInpOT1pw-0U-RCeaQ",
+    authDomain: "center-data-7638a.firebaseapp.com",
+    projectId: "center-data-7638a",
+    storageBucket: "center-data-7638a.firebasestorage.app",
+    messagingSenderId: "698056810488",
+    appId: "1:698056810488:web:5e64995fd6eb16c5ae000d",
+    measurementId: "G-74KLFXWWC1",
+    databaseURL: "https://center-data-7638a-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const databaseRef = ref(database, "4U_CENTER");
+
+
+/* =========================
+   Database
+========================= */
+
+const KEY = "4U_CENTER_DATABASE_V6";
+
+const GRADES = [
+    "الأول الإعدادي",
+    "الثاني الإعدادي",
+    "الثالث الإعدادي",
+    "الأول الثانوي",
+    "الثاني الثانوي",
+    "الثالث الثانوي",
+    "الأول باكالوريا",
+    "الثاني باكالوريا"
+];
+
+
+let oldData = {};
+
+try {
+
+    oldData = JSON.parse(
+        localStorage.getItem("4U_CENTER_DATABASE_V5") || "{}"
+    );
+
+} catch {
+
+    oldData = {};
+
+}
+
+
+let localData = null;
+
+try {
+
+    localData = JSON.parse(
+        localStorage.getItem(KEY) || "null"
+    );
+
+} catch {
+
+    localData = null;
+
+}
+
+
+let db = localData || {
+    teachers: oldData.teachers || [],
+    students: oldData.students || [],
+    attendance: oldData.attendance || {},
+    payments: oldData.payments || {}
+};
+
+
+db.teachers ||= [];
+db.students ||= [];
+db.attendance ||= {};
+db.payments ||= {};
+
+
+let view = "students";
+let firebaseReady = false;
+
+
+/* =========================
+   UI State
+========================= */
+
+const uiState = {
+
+    students: {
+        search: "",
+        grade: "",
+        teacher: ""
+    },
+
+    attendance: {
+        date: getToday(),
+        teacher: "",
+        grade: ""
+    },
+
+    payments: {
+        month: getCurrentMonth(),
+        teacher: "",
+        grade: ""
+    }
+
+};
+
+
+/* =========================
+   Helpers
+========================= */
+
+function getToday() {
+
+    const now = new Date();
+
+    return new Date(
+        now.getTime() -
+        now.getTimezoneOffset() * 60000
+    )
+    .toISOString()
+    .slice(0, 10);
+
+}
+
+
+function getCurrentMonth() {
+
+    const now = new Date();
+
+    return `${now.getFullYear()}-${String(
+        now.getMonth() + 1
+    ).padStart(2, "0")}`;
+
+}
+
+
+function saveLocal() {
+
+    try {
+
+        localStorage.setItem(
+            KEY,
+            JSON.stringify(db)
+        );
+
+    } catch(error) {
+
+        console.error(
+            "LocalStorage error:",
+            error
+        );
+
+    }
+
+}
+
+
+function uid() {
+
+    return Date.now() +
+        Math.floor(Math.random() * 9999);
+
+}
+
+
+function esc(value) {
+
+    return String(value ?? "")
+        .replace(
+            /[&<>"']/g,
+            char => ({
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+            }[char])
+        );
+
+}
+
+
+function teacher(id) {
+
+    return db.teachers.find(
+        t => +t.id === +id
+    );
+
+}
+
+
+/* =========================
+   Firebase Status
+========================= */
+
+function setFirebaseStatus(ok, text) {
+
+    const status =
+        document.getElementById(
+            "firebaseStatus"
+        );
+
+    const statusText =
+        document.getElementById(
+            "firebaseStatusText"
+        );
+
+    if (!status || !statusText) {
+        return;
+    }
+
+    status.classList.toggle(
+        "error",
+        !ok
+    );
+
+    statusText.textContent = text;
+
+}
+
+
+/* =========================
+   Firebase Save
+========================= */
+
+async function saveDatabase(showError = true) {
+
+    saveLocal();
+
+    if (!firebaseReady) {
+        return false;
+    }
+
+    try {
+
+        await set(
+            databaseRef,
+            db
+        );
+
+        setFirebaseStatus(
+            true,
+            "متصل بـ Firebase"
+        );
+
+        return true;
+
+    } catch(error) {
+
+        console.error(
+            "Firebase save error:",
+            error
+        );
+
+        setFirebaseStatus(
+            false,
+            "خطأ في الحفظ"
+        );
+
+        if (showError) {
+
+            Swal.fire({
+                icon: "error",
+                title: "تعذر الحفظ",
+                text:
+                    "حدث خطأ أثناء حفظ البيانات على Firebase."
+            });
+
+        }
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================
+   Normalize Remote Data
+========================= */
+
+function normalizeDatabase(data) {
+
+    return {
+
+        teachers:
+            Array.isArray(data?.teachers)
+                ? data.teachers
+                : [],
+
+        students:
+            Array.isArray(data?.students)
+                ? data.students
+                : [],
+
+        attendance:
+            data?.attendance || {},
+
+        payments:
+            data?.payments || {}
+
+    };
+
+}
+
+
+/* =========================
+   Firebase Initialize
+========================= */
+
+async function initializeFirebase() {
+
+    try {
+
+        setFirebaseStatus(
+            true,
+            "جاري الاتصال..."
+        );
+
+        const snapshot =
+            await get(databaseRef);
+
+
+        if (snapshot.exists()) {
+
+            db = normalizeDatabase(
+                snapshot.val()
+            );
+
+            saveLocal();
+
+        } else {
+
+            await set(
+                databaseRef,
+                db
+            );
+
+            saveLocal();
+
+        }
+
+
+        firebaseReady = true;
+
+        setFirebaseStatus(
+            true,
+            "متصل بـ Firebase"
+        );
+
+
+        onValue(
+            databaseRef,
+            snapshot => {
+
+                if (!snapshot.exists()) {
+                    return;
+                }
+
+                db =
+                    normalizeDatabase(
+                        snapshot.val()
+                    );
+
+                saveLocal();
+
+                render();
+
+            }
+        );
+
+
+        render();
+
+    } catch(error) {
+
+        console.error(
+            "Firebase connection error:",
+            error
+        );
+
+        firebaseReady = false;
+
+        setFirebaseStatus(
+            false,
+            "غير متصل"
+        );
+
+        render();
+
+    }
+
+}
+
+
+/* =========================
+   Views
+========================= */
+
+function setView(newView) {
+
+    view = newView;
+
+    document
+        .querySelectorAll(".nav")
+        .forEach(item => {
+
+            item.classList.toggle(
+                "active",
+                item.dataset.v === newView
+            );
+
+        });
+
+
+    document
+        .getElementById("side")
+        .classList.remove("open");
+
+
+    render();
+
+}
+
+
+function render() {
+
+    const titles = {
+
+        students: "إدارة الطلاب",
+        teachers: "إدارة المدرسين",
+        attendance: "الحضور والغياب",
+        payments: "فلوس الشهر"
+
+    };
+
+
+    document.getElementById(
+        "title"
+    ).textContent = titles[view];
+
+
+    const mainAdd =
+        document.getElementById(
+            "mainAdd"
+        );
+
+
+    const noAdd =
+        view === "attendance" ||
+        view === "payments";
+
+
+    mainAdd.style.display =
+        noAdd
+            ? "none"
+            : "";
+
+
+    mainAdd.innerHTML =
+        view === "teachers"
+
+            ? '<i class="fa-solid fa-plus ml-2"></i>إضافة مدرس'
+
+            : '<i class="fa-solid fa-plus ml-2"></i>إضافة طالب';
+
+
+    mainAdd.onclick =
+        view === "teachers"
+            ? addTeacher
+            : addStudent;
+
+
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+
+    content.innerHTML =
+        view === "students"
+            ? studentsHTML()
+            : view === "teachers"
+                ? teachersHTML()
+                : view === "attendance"
+                    ? attendanceHTML()
+                    : paymentsHTML();
+
+
+    if (view === "students") {
+
+        renderStudentRows();
+
+    }
+
+    if (view === "attendance") {
+
+        renderAttendance();
+
+    }
+
+    if (view === "payments") {
+
+        renderPayments();
+
+    }
+
+}
+
+
+/* =========================
+   Students
+========================= */
+
+function studentsHTML() {
+
+    return `
+
+        <div class="space-y-5">
+
+            <div class="card p-4 flex flex-col md:flex-row gap-3">
+
+                <input
+                    id="q"
+                    class="p-3 bg-slate-100 rounded-xl flex-1 outline-none"
+                    placeholder="ابحث باسم الطالب أو رقم ولي الأمر"
+                    value="${esc(
+                        uiState.students.search
+                    )}"
+                    oninput="studentSearchChanged()">
+
+
+                <select
+                    id="gf"
+                    class="p-3 bg-slate-100 rounded-xl outline-none"
+                    onchange="studentFilterChanged()">
+
+                    <option value="">
+                        كل السنوات الدراسية
+                    </option>
+
+                    ${
+                        GRADES.map(
+                            grade =>
+                                `<option value="${esc(grade)}"
+                                    ${
+                                        uiState.students.grade === grade
+                                            ? "selected"
+                                            : ""
+                                    }>
+                                    ${esc(grade)}
+                                </option>`
+                        ).join("")
+                    }
+
+                </select>
+
+
+                <select
+                    id="tf"
+                    class="p-3 bg-slate-100 rounded-xl outline-none"
+                    onchange="studentFilterChanged()">
+
+                    <option value="">
+                        كل المدرسين
+                    </option>
+
+                    ${
+                        db.teachers.map(
+                            t =>
+                                `<option value="${t.id}"
+                                    ${
+                                        +uiState.students.teacher === +t.id
+                                            ? "selected"
+                                            : ""
+                                    }>
+                                    ${esc(t.name)}
+                                </option>`
+                        ).join("")
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="card overflow-auto">
+
+                <table class="w-full min-w-[750px]">
+
+                    <thead class="bg-slate-50 text-sm">
+
+                        <tr>
+
+                            <th class="p-4 text-right">
+                                الطالب
+                            </th>
+
+                            <th>
+                                السنة الدراسية
+                            </th>
+
+                            <th>
+                                المدرس
+                            </th>
+
+                            <th>
+                                ولي الأمر
+                            </th>
+
+                            <th>
+                                إجراءات
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="rows"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function renderStudentRows() {
+
+    const rows =
+        document.getElementById(
+            "rows"
+        );
+
+    if (!rows) return;
+
+
+    const search =
+        uiState.students.search
+            .trim()
+            .toLowerCase();
+
+
+    const grade =
+        uiState.students.grade;
+
+
+    const teacherId =
+        uiState.students.teacher;
+
+
+    const list =
+        db.students.filter(
+            student => {
+
+                const text =
+                    `${student.name} ${
+                        student.phone || ""
+                    }`.toLowerCase();
+
+
+                return (
+
+                    text.includes(search) &&
+
+                    (!grade ||
+                        student.grade === grade) &&
+
+                    (!teacherId ||
+                        +student.teacherId ===
+                        +teacherId)
+
+                );
+
+            }
+        );
+
+
+    rows.innerHTML =
+        list.map(
+            studentRow
+        ).join("")
+        ||
+        `
+
+        <tr>
+
+            <td
+                colspan="5"
+                class="p-10 text-center text-slate-400">
+
+                ${
+                    db.students.length
+                        ? "لا توجد نتائج"
+                        : "لا يوجد طلاب حتى الآن"
+                }
+
+            </td>
+
+        </tr>
+
+        `;
+
+}
+
+
+function studentRow(student) {
+
+    const t =
+        teacher(
+            student.teacherId
+        );
+
+
+    return `
+
+        <tr class="border-t">
+
+            <td class="p-4 font-bold">
+
+                ${esc(student.name)}
+
+                <div class="text-xs text-slate-400">
+                    ${esc(student.phone || "")}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <span class="badge bg-purple-100 text-purple-700">
+                    ${esc(student.grade)}
+                </span>
+
+            </td>
+
+
+            <td>
+                ${esc(t?.name || "غير محدد")}
+            </td>
+
+
+            <td>
+                ${esc(
+                    student.parentName ||
+                    "غير مسجل"
+                )}
+            </td>
+
+
+            <td>
+
+                <button
+                    onclick="editStudent(${student.id})"
+                    class="text-amber-500 ml-3 action-btn">
+
+                    <i class="fa-solid fa-pen"></i>
+
+                </button>
+
+
+                <button
+                    onclick="deleteStudent(${student.id})"
+                    class="text-red-500 action-btn">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+function studentSearchChanged() {
+
+    uiState.students.search =
+        document.getElementById("q")?.value || "";
+
+    renderStudentRows();
+
+}
+
+
+function studentFilterChanged() {
+
+    uiState.students.grade =
+        document.getElementById("gf")?.value || "";
+
+    uiState.students.teacher =
+        document.getElementById("tf")?.value || "";
+
+    renderStudentRows();
+
+}
+
+
+/* =========================
+   Teachers
+========================= */
+
+function teachersHTML() {
+
+    return `
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+            ${
+                db.teachers.map(
+                    teacherCard
+                ).join("")
+                ||
+                `
+
+                <div class="card p-10 text-center text-slate-400">
+
+                    لم تتم إضافة مدرسين بعد
+
+                </div>
+
+                `
+            }
+
+        </div>
+
+    `;
+
+}
+
+
+function teacherCard(t) {
+
+    const students =
+        db.students.filter(
+            student =>
+                +student.teacherId ===
+                +t.id
+        );
+
+
+    const groups =
+        [...new Set(
+            students.map(
+                student =>
+                    student.grade
+            )
+        )];
+
+
+    return `
+
+        <div class="card p-5">
+
+            <div class="flex justify-between">
+
+                <div>
+
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 grid place-items-center">
+
+                        <i class="fa-solid fa-chalkboard-user"></i>
+
+                    </div>
+
+
+                    <h2 class="font-black text-lg mt-3">
+
+                        ${esc(t.name)}
+
+                    </h2>
+
+
+                    <p class="text-blue-600 text-sm font-bold">
+
+                        ${esc(t.subject || "")}
+
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <button
+                        onclick="editTeacher(${t.id})"
+                        class="text-amber-500 ml-2 action-btn">
+
+                        <i class="fa-solid fa-pen"></i>
+
+                    </button>
+
+
+                    <button
+                        onclick="deleteTeacher(${t.id})"
+                        class="text-red-500 action-btn">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-5 border-t pt-4">
+
+                <div class="font-black mb-3">
+                    طلاب المدرس حسب السنة الدراسية
+                </div>
+
+
+                ${
+                    groups.length
+
+                        ? groups.map(
+                            grade => `
+
+                                <button
+                                    onclick="showTeacherGrade(${t.id},'${esc(grade)}')"
+                                    class="w-full flex justify-between items-center bg-slate-50 hover:bg-blue-50 p-3 rounded-xl mb-2 transition">
+
+                                    <span>
+                                        ${esc(grade)}
+                                    </span>
+
+                                    <span class="badge bg-blue-100 text-blue-700">
+
+                                        ${
+                                            students.filter(
+                                                student =>
+                                                    student.grade === grade
+                                            ).length
+                                        }
+                                        طالب
+
+                                    </span>
+
+                                </button>
+
+                            `
+                        ).join("")
+
+                        : `
+
+                            <p class="text-sm text-slate-400">
+                                لا يوجد طلاب مسجلون لهذا المدرس.
+                            </p>
+
+                        `
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function showTeacherGrade(id, grade) {
+
+    const t =
+        teacher(id);
+
+
+    const list =
+        db.students.filter(
+            student =>
+                +student.teacherId ===
+                +id &&
+                student.grade ===
+                grade
+        );
+
+
+    Swal.fire({
+
+        title:
+            `${esc(t?.name || "")} - ${esc(grade)}`,
+
+        html: `
+
+            <div style="text-align:right">
+
+                ${
+                    list.map(
+                        (student,index) => `
+
+                            <div
+                                style="
+                                    padding:10px;
+                                    border-bottom:1px solid #eee
+                                ">
+
+                                ${index + 1}.
+                                ${esc(student.name)}
+
+                            </div>
+
+                        `
+                    ).join("")
+                    ||
+                    "لا يوجد طلاب"
+                }
+
+            </div>
+
+        `,
+
+        confirmButtonText: "إغلاق"
+
+    });
+
+}
+
+
+/* =========================
+   Attendance
+========================= */
+
+function attendanceHTML() {
+
+    return `
+
+        <div class="space-y-5">
+
+            <div class="card p-5">
+
+                <div class="flex flex-col md:flex-row gap-3">
+
+                    <input
+                        id="date"
+                        type="date"
+                        value="${uiState.attendance.date}"
+                        onchange="attendanceFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+
+                    <select
+                        id="atTeacher"
+                        onchange="attendanceFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+                        <option value="">
+                            كل المدرسين
+                        </option>
+
+                        ${
+                            db.teachers.map(
+                                t =>
+                                    `<option value="${t.id}"
+                                        ${
+                                            +uiState.attendance.teacher ===
+                                            +t.id
+                                                ? "selected"
+                                                : ""
+                                        }>
+                                        ${esc(t.name)}
+                                    </option>`
+                            ).join("")
+                        }
+
+                    </select>
+
+
+                    <select
+                        id="atGrade"
+                        onchange="attendanceFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+                        <option value="">
+                            كل السنوات
+                        </option>
+
+                        ${
+                            GRADES.map(
+                                grade =>
+                                    `<option
+                                        ${
+                                            uiState.attendance.grade === grade
+                                                ? "selected"
+                                                : ""
+                                        }>
+                                        ${esc(grade)}
+                                    </option>`
+                            ).join("")
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="attList"
+                class="space-y-3">
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function attendanceFilterChanged() {
+
+    uiState.attendance.date =
+        document.getElementById(
+            "date"
+        )?.value ||
+        getToday();
+
+
+    uiState.attendance.teacher =
+        document.getElementById(
+            "atTeacher"
+        )?.value || "";
+
+
+    uiState.attendance.grade =
+        document.getElementById(
+            "atGrade"
+        )?.value || "";
+
+
+    renderAttendance();
+
+}
+
+
+function renderAttendance() {
+
+    const container =
+        document.getElementById(
+            "attList"
+        );
+
+    if (!container) return;
+
+
+    const date =
+        uiState.attendance.date;
+
+
+    const teacherId =
+        uiState.attendance.teacher;
+
+
+    const grade =
+        uiState.attendance.grade;
+
+
+    const list =
+        db.students.filter(
+            student =>
+
+                (!teacherId ||
+                    +student.teacherId ===
+                    +teacherId)
+
+                &&
+
+                (!grade ||
+                    student.grade === grade)
+        );
+
+
+    container.innerHTML =
+        list.map(
+            student => {
+
+                const status =
+                    db.attendance?.[date]?.[
+                        student.id
+                    ];
+
+
+                return `
+
+                    <div class="card p-4 flex flex-wrap gap-3 items-center">
+
+                        <div class="flex-1 min-w-[220px]">
+
+                            <b>
+                                ${esc(student.name)}
+                            </b>
+
+                            <div class="text-xs text-slate-400 mt-1">
+
+                                ${esc(student.grade)}
+
+                                •
+
+                                ${esc(
+                                    teacher(
+                                        student.teacherId
+                                    )?.name || ""
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            onclick="markAttendance(${student.id},true)"
+                            class="px-4 py-2 rounded-xl font-bold action-btn ${
+                                status === true
+                                    ? "bg-green-600 text-white"
+                                    : "bg-green-50 text-green-700"
+                            }">
+
+                            حاضر
+
+                        </button>
+
+
+                        <button
+                            onclick="markAttendance(${student.id},false)"
+                            class="px-4 py-2 rounded-xl font-bold action-btn ${
+                                status === false
+                                    ? "bg-red-600 text-white"
+                                    : "bg-red-50 text-red-700"
+                            }">
+
+                            غائب
+
+                        </button>
+
+
+                        ${
+                            status === false
+
+                                ? `
+
+                                    <button
+                                        onclick="absenceMessage(${student.id})"
+                                        class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold action-btn">
+
+                                        <i class="fa-brands fa-whatsapp ml-1"></i>
+                                        إرسال رسالة الغياب
+
+                                    </button>
+
+                                `
+
+                                : ""
+                        }
+
+                    </div>
+
+                `;
+
+            }
+        ).join("")
+        ||
+        `
+
+        <div class="card p-10 text-center text-slate-400">
+
+            لا يوجد طلاب مطابقون للفلاتر
+
+        </div>
+
+        `;
+
+}
+
+
+async function markAttendance(
+    id,
+    status
+) {
+
+    const date =
+        uiState.attendance.date;
+
+
+    db.attendance ||= {};
+    db.attendance[date] ||= {};
+
+
+    db.attendance[date][id] =
+        status;
+
+
+    await saveDatabase();
+
+
+    renderAttendance();
+
+}
+
+
+/* =========================
+   WhatsApp
+========================= */
+
+function absenceMessage(id) {
+
+    const student =
+        db.students.find(
+            item => +item.id === +id
+        );
+
+
+    if (!student) return;
+
+
+    if (!student.phone) {
+
+        Swal.fire(
+            "تنبيه",
+            "رقم ولي الأمر غير مسجل",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    const date =
+        uiState.attendance.date ||
+        getToday();
+
+
+    const message =
+`السيد/ة ولي أمر الطالب ${student.name}،
+
+نحيط سيادتكم علمًا بأن الطالب لم يحضر إلى الحصة اليوم ${new Date(date).toLocaleDateString("ar-EG")}.
+
+نرجو التواصل معنا في حال وجود أي عذر أو استفسار.
+
+مع خالص التحية،
+إدارة السنتر 4U`;
+
+
+    let phone =
+        String(student.phone).replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (phone.startsWith("01")) {
+        phone = "2" + phone;
+    }
+
+
+    window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        "_blank"
+    );
+
+}
+
+
+/* =========================
+   Payments
+========================= */
+
+function paymentsHTML() {
+
+    return `
+
+        <div class="space-y-5">
+
+            <div class="card p-5">
+
+                <div class="flex flex-col md:flex-row gap-3">
+
+                    <input
+                        id="paymentMonth"
+                        type="month"
+                        value="${uiState.payments.month}"
+                        onchange="paymentFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+
+                    <select
+                        id="paymentTeacher"
+                        onchange="paymentFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+                        <option value="">
+                            كل المدرسين
+                        </option>
+
+                        ${
+                            db.teachers.map(
+                                t =>
+                                    `<option value="${t.id}"
+                                        ${
+                                            +uiState.payments.teacher === +t.id
+                                                ? "selected"
+                                                : ""
+                                        }>
+                                        ${esc(t.name)}
+                                    </option>`
+                            ).join("")
+                        }
+
+                    </select>
+
+
+                    <select
+                        id="paymentGrade"
+                        onchange="paymentFilterChanged()"
+                        class="p-3 bg-slate-100 rounded-xl outline-none">
+
+                        <option value="">
+                            كل السنوات
+                        </option>
+
+                        ${
+                            GRADES.map(
+                                grade =>
+                                    `<option
+                                        ${
+                                            uiState.payments.grade === grade
+                                                ? "selected"
+                                                : ""
+                                        }>
+                                        ${esc(grade)}
+                                    </option>`
+                            ).join("")
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="paymentSummary"
+                class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            </div>
+
+
+            <div
+                id="paymentList"
+                class="space-y-3">
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function paymentFilterChanged() {
+
+    uiState.payments.month =
+        document.getElementById(
+            "paymentMonth"
+        )?.value ||
+        getCurrentMonth();
+
+
+    uiState.payments.teacher =
+        document.getElementById(
+            "paymentTeacher"
+        )?.value || "";
+
+
+    uiState.payments.grade =
+        document.getElementById(
+            "paymentGrade"
+        )?.value || "";
+
+
+    renderPayments();
+
+}
+
+
+function renderPayments() {
+
+    const summary =
+        document.getElementById(
+            "paymentSummary"
+        );
+
+    const listContainer =
+        document.getElementById(
+            "paymentList"
+        );
+
+
+    if (!summary || !listContainer) {
+        return;
+    }
+
+
+    const month =
+        uiState.payments.month ||
+        getCurrentMonth();
+
+
+    const teacherId =
+        uiState.payments.teacher;
+
+
+    const grade =
+        uiState.payments.grade;
+
+
+    const list =
+        db.students.filter(
+            student =>
+
+                (!teacherId ||
+                    +student.teacherId ===
+                    +teacherId)
+
+                &&
+
+                (!grade ||
+                    student.grade === grade)
+        );
+
+
+    const paid =
+        list.filter(
+            student =>
+                db.payments?.[month]?.[
+                    student.id
+                ] === true
+        ).length;
+
+
+    const unpaid =
+        list.length - paid;
+
+
+    summary.innerHTML = `
+
+        <div class="card p-5">
+
+            <div class="text-sm text-slate-400">
+                إجمالي الطلاب
+            </div>
+
+            <div class="text-3xl font-black mt-1">
+                ${list.length}
+            </div>
+
+        </div>
+
+
+        <div class="card p-5">
+
+            <div class="text-sm text-green-600">
+                المدفوع
+            </div>
+
+            <div class="text-3xl font-black text-green-600 mt-1">
+                ${paid}
+            </div>
+
+        </div>
+
+
+        <div class="card p-5">
+
+            <div class="text-sm text-red-500">
+                غير المدفوع
+            </div>
+
+            <div class="text-3xl font-black text-red-500 mt-1">
+                ${unpaid}
+            </div>
+
+        </div>
+
+    `;
+
+
+    listContainer.innerHTML =
+        list.map(
+            student => {
+
+                const isPaid =
+                    db.payments?.[month]?.[
+                        student.id
+                    ] === true;
+
+
+                return `
+
+                    <div class="card p-4 flex flex-wrap gap-3 items-center">
+
+                        <div class="flex-1 min-w-[220px]">
+
+                            <div class="font-black">
+                                ${esc(student.name)}
+                            </div>
+
+                            <div class="text-xs text-slate-400 mt-1">
+
+                                ${esc(student.grade)}
+
+                                •
+
+                                ${esc(
+                                    teacher(
+                                        student.teacherId
+                                    )?.name || ""
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="badge ${
+                            isPaid
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                        }">
+
+                            ${
+                                isPaid
+                                    ? "تم الدفع"
+                                    : "لم يتم الدفع"
+                            }
+
+                        </span>
+
+
+                        ${
+                            isPaid
+
+                                ? `
+
+                                    <button
+                                        onclick="markPayment(${student.id},false)"
+                                        class="px-4 py-2 rounded-xl bg-red-50 text-red-600 font-bold action-btn">
+
+                                        <i class="fa-solid fa-xmark ml-1"></i>
+                                        إلغاء الدفع
+
+                                    </button>
+
+                                `
+
+                                : `
+
+                                    <button
+                                        onclick="markPayment(${student.id},true)"
+                                        class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold action-btn">
+
+                                        <i class="fa-solid fa-check ml-1"></i>
+                                        تم الدفع
+
+                                    </button>
+
+                                `
+                        }
+
+                    </div>
+
+                `;
+
+            }
+        ).join("")
+        ||
+
+        `
+
+            <div class="card p-10 text-center text-slate-400">
+
+                لا يوجد طلاب مطابقون للفلاتر
+
+            </div>
+
+        `;
+
+}
+
+
+async function markPayment(
+    id,
+    status
+) {
+
+    const month =
+        uiState.payments.month ||
+        getCurrentMonth();
+
+
+    db.payments ||= {};
+    db.payments[month] ||= {};
+
+
+    db.payments[month][id] =
+        status;
+
+
+    await saveDatabase();
+
+
+    renderPayments();
+
+}
+
+
+/* =========================
+   Teachers CRUD
+========================= */
+
+async function addTeacher() {
+
+    const result =
+        await Swal.fire({
+
+            title: "إضافة مدرس",
+
+            html: `
+
+                <input
+                    id="teacherName"
+                    class="swal2-input"
+                    placeholder="اسم المدرس">
+
+                <input
+                    id="teacherSubject"
+                    class="swal2-input"
+                    placeholder="المادة">
+
+            `,
+
+            showCancelButton: true,
+
+            confirmButtonText: "إضافة",
+
+            cancelButtonText: "إلغاء",
+
+            preConfirm: () => {
+
+                const name =
+                    document.getElementById(
+                        "teacherName"
+                    ).value.trim();
+
+
+                if (!name) {
+
+                    Swal.showValidationMessage(
+                        "اكتب اسم المدرس"
+                    );
+
+                    return false;
+
+                }
+
+
+                return {
+
+                    name,
+
+                    subject:
+                        document.getElementById(
+                            "teacherSubject"
+                        ).value.trim()
+
+                };
+
+            }
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    db.teachers.push({
+
+        id: uid(),
+
+        ...result.value
+
+    });
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+async function editTeacher(id) {
+
+    const t =
+        teacher(id);
+
+
+    if (!t) return;
+
+
+    const result =
+        await Swal.fire({
+
+            title: "تعديل المدرس",
+
+            html: `
+
+                <input
+                    id="teacherName"
+                    class="swal2-input"
+                    value="${esc(t.name)}">
+
+                <input
+                    id="teacherSubject"
+                    class="swal2-input"
+                    value="${esc(t.subject || "")}">
+
+            `,
+
+            showCancelButton: true,
+
+            confirmButtonText: "حفظ",
+
+            cancelButtonText: "إلغاء",
+
+            preConfirm: () => ({
+
+                name:
+                    document.getElementById(
+                        "teacherName"
+                    ).value.trim(),
+
+                subject:
+                    document.getElementById(
+                        "teacherSubject"
+                    ).value.trim()
+
+            })
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    Object.assign(
+        t,
+        result.value
+    );
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+async function deleteTeacher(id) {
+
+    const result =
+        await Swal.fire({
+
+            title: "حذف المدرس؟",
+
+            text:
+                "سيتم إزالة المدرس من الطلاب المرتبطين به.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText: "حذف",
+
+            cancelButtonText: "إلغاء"
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    db.teachers =
+        db.teachers.filter(
+            t => +t.id !== +id
+        );
+
+
+    db.students.forEach(
+        student => {
+
+            if (+student.teacherId === +id) {
+                student.teacherId = "";
+            }
+
+        }
+    );
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+/* =========================
+   Teacher Options
+========================= */
+
+function teacherOptions(
+    selected = ""
+) {
+
+    return db.teachers.map(
+        t => `
+
+            <option
+                value="${t.id}"
+                ${
+                    +t.id === +selected
+                        ? "selected"
+                        : ""
+                }>
+
+                ${esc(t.name)}
+                —
+                ${esc(t.subject || "")}
+
+            </option>
+
+        `
+    ).join("");
+
+}
+
+
+/* =========================
+   Students CRUD
+========================= */
+
+async function addStudent() {
+
+    if (!db.teachers.length) {
+
+        return Swal.fire(
+            "تنبيه",
+            "أضف مدرسًا أولًا",
+            "warning"
+        );
+
+    }
+
+
+    const result =
+        await Swal.fire({
+
+            title: "إضافة طالب",
+
+            html: `
+
+                <input
+                    id="studentName"
+                    class="swal2-input"
+                    placeholder="اسم الطالب">
+
+                <input
+                    id="parentName"
+                    class="swal2-input"
+                    placeholder="اسم ولي الأمر">
+
+                <input
+                    id="parentPhone"
+                    class="swal2-input"
+                    placeholder="رقم ولي الأمر">
+
+
+                <select
+                    id="studentGrade"
+                    class="swal2-input">
+
+                    <option value="">
+                        اختر السنة الدراسية
+                    </option>
+
+                    ${
+                        GRADES.map(
+                            grade =>
+                                `<option value="${esc(grade)}">
+                                    ${esc(grade)}
+                                </option>`
+                        ).join("")
+                    }
+
+                </select>
+
+
+                <select
+                    id="studentTeacher"
+                    class="swal2-input">
+
+                    <option value="">
+                        اختر المدرس
+                    </option>
+
+                    ${teacherOptions()}
+
+                </select>
+
+            `,
+
+            showCancelButton: true,
+
+            confirmButtonText: "إضافة",
+
+            cancelButtonText: "إلغاء",
+
+            preConfirm: () => {
+
+                const name =
+                    document.getElementById(
+                        "studentName"
+                    ).value.trim();
+
+
+                const grade =
+                    document.getElementById(
+                        "studentGrade"
+                    ).value;
+
+
+                const teacherId =
+                    document.getElementById(
+                        "studentTeacher"
+                    ).value;
+
+
+                if (
+                    !name ||
+                    !grade ||
+                    !teacherId
+                ) {
+
+                    Swal.showValidationMessage(
+                        "أكمل البيانات الأساسية"
+                    );
+
+                    return false;
+
+                }
+
+
+                return {
+
+                    name,
+
+                    parentName:
+                        document.getElementById(
+                            "parentName"
+                        ).value.trim(),
+
+                    phone:
+                        document.getElementById(
+                            "parentPhone"
+                        ).value.trim(),
+
+                    grade,
+
+                    teacherId
+
+                };
+
+            }
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    db.students.push({
+
+        id: uid(),
+
+        ...result.value
+
+    });
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+async function editStudent(id) {
+
+    const student =
+        db.students.find(
+            item =>
+                +item.id === +id
+        );
+
+
+    if (!student) return;
+
+
+    const result =
+        await Swal.fire({
+
+            title: "تعديل الطالب",
+
+            html: `
+
+                <input
+                    id="studentName"
+                    class="swal2-input"
+                    value="${esc(student.name)}">
+
+                <input
+                    id="parentName"
+                    class="swal2-input"
+                    value="${esc(student.parentName || "")}">
+
+                <input
+                    id="parentPhone"
+                    class="swal2-input"
+                    value="${esc(student.phone || "")}">
+
+
+                <select
+                    id="studentGrade"
+                    class="swal2-input">
+
+                    ${
+                        GRADES.map(
+                            grade =>
+                                `<option value="${esc(grade)}"
+                                    ${
+                                        student.grade === grade
+                                            ? "selected"
+                                            : ""
+                                    }>
+                                    ${esc(grade)}
+                                </option>`
+                        ).join("")
+                    }
+
+                </select>
+
+
+                <select
+                    id="studentTeacher"
+                    class="swal2-input">
+
+                    ${teacherOptions(
+                        student.teacherId
+                    )}
+
+                </select>
+
+            `,
+
+            showCancelButton: true,
+
+            confirmButtonText: "حفظ",
+
+            cancelButtonText: "إلغاء",
+
+            preConfirm: () => ({
+
+                name:
+                    document.getElementById(
+                        "studentName"
+                    ).value.trim(),
+
+                parentName:
+                    document.getElementById(
+                        "parentName"
+                    ).value.trim(),
+
+                phone:
+                    document.getElementById(
+                        "parentPhone"
+                    ).value.trim(),
+
+                grade:
+                    document.getElementById(
+                        "studentGrade"
+                    ).value,
+
+                teacherId:
+                    document.getElementById(
+                        "studentTeacher"
+                    ).value
+
+            })
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    Object.assign(
+        student,
+        result.value
+    );
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+async function deleteStudent(id) {
+
+    const result =
+        await Swal.fire({
+
+            title: "حذف الطالب؟",
+
+            text:
+                "سيتم حذف بيانات الطالب وسجل غيابه والمدفوعات الخاصة به.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText: "حذف",
+
+            cancelButtonText: "إلغاء"
+
+        });
+
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+
+    db.students =
+        db.students.filter(
+            student =>
+                +student.id !== +id
+        );
+
+
+    Object.values(
+        db.attendance || {}
+    ).forEach(
+        day => {
+
+            if (day) {
+                delete day[id];
+            }
+
+        }
+    );
+
+
+    Object.values(
+        db.payments || {}
+    ).forEach(
+        month => {
+
+            if (month) {
+                delete month[id];
+            }
+
+        }
+    );
+
+
+    await saveDatabase();
+
+    render();
+
+}
+
+
+/* =========================
+   Global Functions
+========================= */
+
+window.setView =
+    setView;
+
+window.studentSearchChanged =
+    studentSearchChanged;
+
+window.studentFilterChanged =
+    studentFilterChanged;
+
+window.attendanceFilterChanged =
+    attendanceFilterChanged;
+
+window.paymentFilterChanged =
+    paymentFilterChanged;
+
+window.renderAttendance =
+    renderAttendance;
+
+window.renderPayments =
+    renderPayments;
+
+window.addTeacher =
+    addTeacher;
+
+window.editTeacher =
+    editTeacher;
+
+window.deleteTeacher =
+    deleteTeacher;
+
+window.addStudent =
+    addStudent;
+
+window.editStudent =
+    editStudent;
+
+window.deleteStudent =
+    deleteStudent;
+
+window.markAttendance =
+    markAttendance;
+
+window.markPayment =
+    markPayment;
+
+window.absenceMessage =
+    absenceMessage;
+
+window.showTeacherGrade =
+    showTeacherGrade;
+
+
+/* =========================
+   Start
+========================= */
+
+saveLocal();
+
+render();
+
+initializeFirebase();
+
+</script>
+
+</body>
+</html>
