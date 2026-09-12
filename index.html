@@ -89,6 +89,244 @@ body{
     transform:translateY(-1px)
 }
 
+
+.login-screen{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:linear-gradient(135deg,#07101f,#111c32);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+.login-screen.hidden{
+    display:none;
+}
+.login-box{
+    width:min(420px,100%);
+    background:white;
+    border-radius:28px;
+    padding:35px 28px;
+    box-shadow:0 30px 80px #00000045;
+    text-align:center;
+}
+.login-logo{
+    width:72px;
+    height:72px;
+    margin:0 auto 18px;
+    border-radius:22px;
+    display:grid;
+    place-items:center;
+    background:#2563eb;
+    color:white;
+    font-size:30px;
+    font-weight:900;
+    font-style:italic;
+    box-shadow:0 15px 35px #2563eb55;
+}
+.login-input{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
+    border-radius:15px;
+    outline:none;
+    font-family:inherit;
+    text-align:center;
+    font-size:16px;
+    margin-top:18px;
+}
+.login-input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px #2563eb18;
+}
+.login-button{
+    width:100%;
+    border:0;
+    cursor:pointer;
+    margin-top:14px;
+    padding:14px 16px;
+    border-radius:15px;
+    background:#2563eb;
+    color:white;
+    font-family:inherit;
+    font-weight:900;
+    font-size:15px;
+    transition:.2s;
+}
+.login-button:hover{
+    background:#1d4ed8;
+    transform:translateY(-1px);
+}
+.login-error{
+    min-height:22px;
+    margin-top:10px;
+    color:#dc2626;
+    font-size:12px;
+    font-weight:800;
+}
+.attendance-wrap{
+    overflow-x:auto;
+    border-radius:20px;
+}
+.attendance-table{
+    width:100%;
+    min-width:1050px;
+    border-collapse:separate;
+    border-spacing:0;
+}
+.attendance-table th,
+.attendance-table td{
+    border-bottom:1px solid #eef2f7;
+    border-left:1px solid #eef2f7;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.attendance-search{
+    min-width:240px;
+}
+.schedule-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:4px 8px;
+    border-radius:999px;
+    background:#eff6ff;
+    color:#2563eb;
+    font-size:10px;
+    font-weight:900;
+}
+.schedule-chip.missing{
+    background:#fef2f2;
+    color:#dc2626;
+}
+.lesson-cell{
+    min-width:90px;
+}
+.lesson-cell.unscheduled{
+    background:#f8fafc;
+}
+.lesson-note{
+    display:block;
+    margin-top:3px;
+    font-size:9px;
+    color:#94a3b8;
+}
+.att-date-label{
+    font-size:10px;
+    font-weight:900;
+}
+.att-date-day{
+    font-size:9px;
+    color:#64748b;
+}
+.teacher-search{
+    margin-bottom:20px;
+}
+.attendance-table thead th{
+    background:#f8fafc;
+    padding:10px 8px;
+    font-size:11px;
+}
+.attendance-table tbody td{
+    padding:8px 6px;
+}
+.attendance-student{
+    position:sticky;
+    right:0;
+    z-index:3;
+    min-width:190px;
+    text-align:right !important;
+    background:white;
+    box-shadow:-8px 0 18px #0f172a08;
+}
+.attendance-table thead .attendance-student{
+    background:#f8fafc;
+    z-index:5;
+}
+.att-date{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+}
+.att-date.current{
+    color:#2563eb;
+}
+.att-date small{
+    font-size:9px;
+    color:#94a3b8;
+}
+.att-cell{
+    min-width:82px;
+}
+.att-state{
+    display:inline-grid;
+    place-items:center;
+    width:34px;
+    height:34px;
+    border-radius:11px;
+    font-size:15px;
+    font-weight:900;
+}
+.att-state.present{
+    background:#dcfce7;
+    color:#15803d;
+}
+.att-state.absent{
+    background:#fee2e2;
+    color:#dc2626;
+}
+.att-state.empty{
+    background:#f1f5f9;
+    color:#94a3b8;
+}
+.att-edit{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    margin-top:5px;
+}
+.att-mini{
+    width:27px;
+    height:25px;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:900;
+    font-size:12px;
+}
+.att-mini.present{
+    background:#dcfce7;
+    color:#15803d;
+}
+.att-mini.absent{
+    background:#fee2e2;
+    color:#dc2626;
+}
+.att-mini.active{
+    color:white;
+}
+.att-mini.present.active{
+    background:#16a34a;
+}
+.att-mini.absent.active{
+    background:#dc2626;
+}
+.streak-badge{
+    margin-top:4px;
+    display:inline-block;
+    padding:3px 7px;
+    border-radius:999px;
+    background:#fff7ed;
+    color:#c2410c;
+    font-size:9px;
+    font-weight:900;
+}
+
 @media(max-width:900px){
 
     .sidebar{
@@ -110,6 +348,43 @@ body{
 </head>
 
 <body>
+
+<div id="loginScreen" class="login-screen">
+
+    <div class="login-box">
+
+        <div class="login-logo">4U</div>
+
+        <h2 class="text-2xl font-black text-slate-900">
+            تسجيل الدخول
+        </h2>
+
+        <p class="text-sm text-slate-400 mt-2">
+            أدخل كلمة المرور لفتح نظام إدارة السنتر
+        </p>
+
+        <input
+            id="loginPassword"
+            type="password"
+            class="login-input"
+            placeholder="كلمة المرور"
+            autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') checkPassword()">
+
+        <button
+            type="button"
+            class="login-button"
+            onclick="checkPassword()">
+            <i class="fa-solid fa-lock-open ml-2"></i>
+            دخول
+        </button>
+
+        <div id="loginError" class="login-error"></div>
+
+    </div>
+
+</div>
+
 
 <div class="min-h-screen flex">
 
@@ -279,6 +554,31 @@ const GRADES = [
     "الثاني باكالوريا"
 ];
 
+const SCHEDULES = {
+    "sat-tue": {
+        label: "السبت + الثلاثاء",
+        days: [6, 2]
+    },
+    "sun-wed": {
+        label: "الأحد + الأربعاء",
+        days: [0, 3]
+    },
+    "mon-thu": {
+        label: "الاثنين + الخميس",
+        days: [1, 4]
+    }
+};
+
+const ARABIC_DAYS = [
+    "الأحد",
+    "الاثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت"
+];
+
 
 let oldData = {};
 
@@ -323,6 +623,59 @@ db.students ||= [];
 db.attendance ||= {};
 db.payments ||= {};
 
+/* =========================
+   Groups
+========================= */
+
+function ensureGroupStructure(database) {
+
+    database.teachers ||= [];
+    database.students ||= [];
+
+    database.teachers.forEach(t => {
+
+        t.groups = Array.isArray(t.groups) ? t.groups : [];
+
+        // Migrate the old model: one schedule per grade -> one default group per grade.
+        if (!t.groups.length && t.schedules && typeof t.schedules === "object") {
+            Object.entries(t.schedules).forEach(([grade, schedule]) => {
+                if (!schedule) return;
+                t.groups.push({
+                    id: uid(),
+                    name: "مجموعة 1",
+                    grade,
+                    schedule,
+                    time: ""
+                });
+            });
+        }
+
+        t.groups.forEach((g, index) => {
+            g.id ||= uid();
+            g.name ||= `مجموعة ${index + 1}`;
+            g.grade ||= "";
+            g.schedule ||= "";
+            g.time ||= "";
+        });
+
+        // Keep old schedules only for backward compatibility; groups are now the source of truth.
+        t.schedules = {};
+    });
+
+    // Attach old students to the first matching group of the same teacher/year.
+    database.students.forEach(student => {
+        if (student.groupId) return;
+
+        const t = database.teachers.find(x => +x.id === +student.teacherId);
+        const g = t?.groups?.find(x => x.grade === student.grade);
+        if (g) student.groupId = g.id;
+    });
+
+    return database;
+}
+
+ensureGroupStructure(db);
+
 
 let view = "students";
 let firebaseReady = false;
@@ -340,16 +693,23 @@ const uiState = {
         teacher: ""
     },
 
+    teachers: {
+        search: ""
+    },
+
     attendance: {
         date: getToday(),
         teacher: "",
-        grade: ""
+        grade: "",
+        group: "",
+        search: ""
     },
 
     payments: {
         month: getCurrentMonth(),
         teacher: "",
-        grade: ""
+        grade: "",
+        search: ""
     }
 
 };
@@ -531,12 +891,22 @@ async function saveDatabase(showError = true) {
 
 function normalizeDatabase(data) {
 
-    return {
+    const teachers =
+        Array.isArray(data?.teachers)
+            ? data.teachers.map(item => ({
+                ...item,
+                groups: Array.isArray(item?.groups) ? item.groups : [],
+                schedules:
+                    item?.schedules &&
+                    typeof item.schedules === "object"
+                        ? item.schedules
+                        : {}
+            }))
+            : [];
 
-        teachers:
-            Array.isArray(data?.teachers)
-                ? data.teachers
-                : [],
+    const normalized = {
+
+        teachers,
 
         students:
             Array.isArray(data?.students)
@@ -550,6 +920,8 @@ function normalizeDatabase(data) {
             data?.payments || {}
 
     };
+
+    return ensureGroupStructure(normalized);
 
 }
 
@@ -639,6 +1011,89 @@ async function initializeFirebase() {
         render();
 
     }
+
+}
+
+
+
+/* =========================
+   Site Password
+========================= */
+
+const SITE_PASSWORD = "4U2026";
+const LOGIN_SESSION_KEY = "4U_AUTHENTICATED";
+
+function isLoggedIn() {
+    return sessionStorage.getItem(
+        LOGIN_SESSION_KEY
+    ) === "true";
+}
+
+function showApp() {
+
+    const screen =
+        document.getElementById("loginScreen");
+
+    if (screen) {
+        screen.classList.add("hidden");
+    }
+
+}
+
+function checkPassword() {
+
+    const input =
+        document.getElementById("loginPassword");
+
+    const error =
+        document.getElementById("loginError");
+
+    if (!input || !error) {
+        return;
+    }
+
+    if (input.value === SITE_PASSWORD) {
+
+        sessionStorage.setItem(
+            LOGIN_SESSION_KEY,
+            "true"
+        );
+
+        error.textContent = "";
+
+        showApp();
+
+        input.value = "";
+
+        return;
+    }
+
+    error.textContent =
+        "كلمة المرور غير صحيحة";
+
+    input.value = "";
+
+    input.focus();
+
+}
+
+function initializeLogin() {
+
+    if (isLoggedIn()) {
+        showApp();
+        return;
+    }
+
+    setTimeout(() => {
+
+        const input =
+            document.getElementById(
+                "loginPassword"
+            );
+
+        input?.focus();
+
+    }, 100);
 
 }
 
@@ -743,6 +1198,12 @@ function render() {
 
     }
 
+    if (view === "teachers") {
+
+        renderTeacherCards();
+
+    }
+
     if (view === "attendance") {
 
         renderAttendance();
@@ -773,7 +1234,7 @@ function studentsHTML() {
                 <input
                     id="q"
                     class="p-3 bg-slate-100 rounded-xl flex-1 outline-none"
-                    placeholder="ابحث باسم الطالب أو رقم ولي الأمر"
+                    placeholder="ابحث بالاسم أو ولي الأمر أو الهاتف أو المجموعة أو كود الطالب"
                     value="${esc(
                         uiState.students.search
                     )}"
@@ -908,10 +1369,19 @@ function renderStudentRows() {
         db.students.filter(
             student => {
 
+                const teacherName =
+                    teacher(student.teacherId)?.name || "";
+
+                const group = getStudentGroup(student);
+
                 const text =
-                    `${student.name} ${
-                        student.phone || ""
-                    }`.toLowerCase();
+                    `${student.name || ""} ${
+                        student.parentName || ""
+                    } ${student.phone || ""} ${
+                        student.grade || ""
+                    } ${teacherName} ${
+                        group?.name || ""
+                    } ${student.id || ""}`.toLowerCase();
 
 
                 return (
@@ -966,6 +1436,8 @@ function studentRow(student) {
             student.teacherId
         );
 
+    const group = getStudentGroup(student);
+
 
     return `
 
@@ -977,6 +1449,10 @@ function studentRow(student) {
 
                 <div class="text-xs text-slate-400">
                     ${esc(student.phone || "")}
+                </div>
+
+                <div class="text-[11px] text-slate-300 mt-1">
+                    كود الطالب: ${esc(student.id)}
                 </div>
 
             </td>
@@ -993,6 +1469,7 @@ function studentRow(student) {
 
             <td>
                 ${esc(t?.name || "غير محدد")}
+                <div class="text-xs text-slate-400 mt-1">${esc(group?.name || "بدون مجموعة")}</div>
             </td>
 
 
@@ -1005,6 +1482,15 @@ function studentRow(student) {
 
 
             <td>
+
+                <button
+                    onclick="parentWhatsApp(${student.id})"
+                    class="text-green-600 ml-3 action-btn"
+                    title="التواصل مع ولي الأمر عبر واتساب">
+
+                    <i class="fa-brands fa-whatsapp"></i>
+
+                </button>
 
                 <button
                     onclick="editStudent(${student.id})"
@@ -1063,213 +1549,221 @@ function teachersHTML() {
 
     return `
 
-        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div class="teacher-search">
 
-            ${
-                db.teachers.map(
-                    teacherCard
-                ).join("")
-                ||
-                `
+            <div class="card p-4">
 
-                <div class="card p-10 text-center text-slate-400">
+                <input
+                    id="teacherSearch"
+                    value="${esc(uiState.teachers.search)}"
+                    oninput="teacherSearchChanged()"
+                    class="w-full p-3 bg-slate-100 rounded-xl outline-none"
+                    placeholder="ابحث باسم المدرس أو المادة أو الصف">
 
-                    لم تتم إضافة مدرسين بعد
+            </div>
 
-                </div>
+        </div>
 
-                `
-            }
-
+        <div
+            id="teacherCards"
+            class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
         </div>
 
     `;
 
 }
 
+function renderTeacherCards() {
+
+    const container =
+        document.getElementById("teacherCards");
+
+    if (!container) return;
+
+    const q =
+        uiState.teachers.search
+            .trim()
+            .toLowerCase();
+
+    const list =
+        db.teachers.filter(item => {
+
+            const scheduleText =
+                (item.groups || [])
+                    .map(g =>
+                        `${g.name || ""} ${g.grade || ""} ${SCHEDULES[g.schedule]?.label || ""} ${g.time || ""}`
+                    )
+                    .join(" ");
+
+            const text =
+                `${item.name || ""} ${item.subject || ""} ${scheduleText}`
+                    .toLowerCase();
+
+            return text.includes(q);
+
+        });
+
+    container.innerHTML =
+        list.map(teacherCard).join("")
+        ||
+        `
+            <div class="card p-10 text-center text-slate-400 md:col-span-2 xl:col-span-3">
+                ${
+                    db.teachers.length
+                        ? "لا توجد نتائج مطابقة للبحث"
+                        : "لم تتم إضافة مدرسين بعد"
+                }
+            </div>
+        `;
+
+}
+
+function teacherSearchChanged() {
+
+    uiState.teachers.search =
+        document.getElementById("teacherSearch")?.value || "";
+
+    renderTeacherCards();
+
+}
+
+function teacherGroupRows(t) {
+
+    const groups = Array.isArray(t.groups) ? t.groups : [];
+
+    if (!groups.length) {
+        return `
+            <p class="text-xs text-slate-400">
+                لم يتم إنشاء مجموعات للمدرس بعد.
+            </p>
+        `;
+    }
+
+    return groups.map((g, index) => {
+        const count = db.students.filter(student =>
+            +student.teacherId === +t.id &&
+            String(student.groupId) === String(g.id)
+        ).length;
+        const label = SCHEDULES[g.schedule]?.label || "الأيام غير محددة";
+
+        return `
+            <button
+                onclick="showTeacherGroup(${t.id},'${esc(g.id)}')"
+                class="w-full text-right bg-slate-50 hover:bg-blue-50 rounded-xl p-3 mb-2 transition">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-black text-sm">${esc(g.name || `مجموعة ${index + 1}`)}</div>
+                        <div class="text-[11px] text-slate-500 mt-1">${esc(g.grade || "غير محدد")}</div>
+                    </div>
+                    <span class="badge bg-blue-100 text-blue-700">${count} طالب</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span class="schedule-chip">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        ${esc(label)}
+                    </span>
+                    ${g.time ? `<span class="schedule-chip"><i class="fa-solid fa-clock"></i> ${esc(g.time)}</span>` : ""}
+                </div>
+            </button>
+        `;
+    }).join("");
+}
 
 function teacherCard(t) {
 
     const students =
-        db.students.filter(
-            student =>
-                +student.teacherId ===
-                +t.id
-        );
+        db.students.filter(student => +student.teacherId === +t.id);
 
-
-    const groups =
-        [...new Set(
-            students.map(
-                student =>
-                    student.grade
-            )
-        )];
-
+    const groups = Array.isArray(t.groups) ? t.groups : [];
 
     return `
-
         <div class="card p-5">
 
             <div class="flex justify-between">
 
                 <div>
-
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 grid place-items-center">
-
                         <i class="fa-solid fa-chalkboard-user"></i>
-
                     </div>
-
-
-                    <h2 class="font-black text-lg mt-3">
-
-                        ${esc(t.name)}
-
-                    </h2>
-
-
-                    <p class="text-blue-600 text-sm font-bold">
-
-                        ${esc(t.subject || "")}
-
-                    </p>
-
+                    <h2 class="font-black text-lg mt-3">${esc(t.name)}</h2>
+                    <p class="text-blue-600 text-sm font-bold">${esc(t.subject || "")}</p>
                 </div>
-
 
                 <div>
-
-                    <button
-                        onclick="editTeacher(${t.id})"
-                        class="text-amber-500 ml-2 action-btn">
-
+                    <button onclick="editTeacher(${t.id})" class="text-amber-500 ml-2 action-btn">
                         <i class="fa-solid fa-pen"></i>
-
                     </button>
-
-
-                    <button
-                        onclick="deleteTeacher(${t.id})"
-                        class="text-red-500 action-btn">
-
+                    <button onclick="deleteTeacher(${t.id})" class="text-red-500 action-btn">
                         <i class="fa-solid fa-trash"></i>
-
                     </button>
-
                 </div>
 
             </div>
-
 
             <div class="mt-5 border-t pt-4">
-
-                <div class="font-black mb-3">
-                    طلاب المدرس حسب السنة الدراسية
+                <div class="flex items-center justify-between mb-3">
+                    <div class="font-black">المجموعات</div>
+                    <span class="badge bg-slate-100 text-slate-700">${groups.length} مجموعة</span>
                 </div>
-
-
-                ${
-                    groups.length
-
-                        ? groups.map(
-                            grade => `
-
-                                <button
-                                    onclick="showTeacherGrade(${t.id},'${esc(grade)}')"
-                                    class="w-full flex justify-between items-center bg-slate-50 hover:bg-blue-50 p-3 rounded-xl mb-2 transition">
-
-                                    <span>
-                                        ${esc(grade)}
-                                    </span>
-
-                                    <span class="badge bg-blue-100 text-blue-700">
-
-                                        ${
-                                            students.filter(
-                                                student =>
-                                                    student.grade === grade
-                                            ).length
-                                        }
-                                        طالب
-
-                                    </span>
-
-                                </button>
-
-                            `
-                        ).join("")
-
-                        : `
-
-                            <p class="text-sm text-slate-400">
-                                لا يوجد طلاب مسجلون لهذا المدرس.
-                            </p>
-
-                        `
-                }
-
+                ${teacherGroupRows(t)}
             </div>
 
-        </div>
+            <div class="mt-4 text-xs text-slate-400">إجمالي طلاب المدرس: ${students.length}</div>
 
+        </div>
     `;
 
 }
 
+function showTeacherGroup(teacherId, groupId) {
+
+    const t = teacher(teacherId);
+    const group = t?.groups?.find(g => String(g.id) === String(groupId));
+    if (!t || !group) return;
+
+    const list = db.students.filter(student =>
+        +student.teacherId === +teacherId &&
+        String(student.groupId) === String(groupId)
+    );
+
+    const label = SCHEDULES[group.schedule]?.label || "الأيام غير محددة";
+
+    Swal.fire({
+        title: `${esc(group.name)} - ${esc(group.grade)}`,
+        html: `
+            <div style="text-align:right">
+                <div style="background:#f8fafc;border-radius:12px;padding:10px;margin-bottom:10px">
+                    <b>المدرس:</b> ${esc(t.name)}<br>
+                    <b>الأيام:</b> ${esc(label)}
+                    ${group.time ? `<br><b>الوقت:</b> ${esc(group.time)}` : ""}
+                </div>
+                ${list.map((student,index) => `
+                    <div style="padding:10px;border-bottom:1px solid #eee">
+                        ${index + 1}. ${esc(student.name)}
+                    </div>
+                `).join("") || "لا يوجد طلاب في المجموعة"}
+            </div>
+        `,
+        confirmButtonText: "إغلاق"
+    });
+
+}
 
 function showTeacherGrade(id, grade) {
 
-    const t =
-        teacher(id);
+    const t = teacher(id);
+    if (!t) return;
 
-
-    const list =
-        db.students.filter(
-            student =>
-                +student.teacherId ===
-                +id &&
-                student.grade ===
-                grade
-        );
-
+    const list = db.students.filter(student =>
+        +student.teacherId === +id && student.grade === grade
+    );
 
     Swal.fire({
-
-        title:
-            `${esc(t?.name || "")} - ${esc(grade)}`,
-
-        html: `
-
-            <div style="text-align:right">
-
-                ${
-                    list.map(
-                        (student,index) => `
-
-                            <div
-                                style="
-                                    padding:10px;
-                                    border-bottom:1px solid #eee
-                                ">
-
-                                ${index + 1}.
-                                ${esc(student.name)}
-
-                            </div>
-
-                        `
-                    ).join("")
-                    ||
-                    "لا يوجد طلاب"
-                }
-
-            </div>
-
-        `,
-
+        title: `${esc(t.name)} - ${esc(grade)}`,
+        html: `<div style="text-align:right">${list.map((student,index) => `
+            <div style="padding:10px;border-bottom:1px solid #eee">${index + 1}. ${esc(student.name)}</div>
+        `).join("") || "لا يوجد طلاب"}</div>`,
         confirmButtonText: "إغلاق"
-
     });
 
 }
@@ -1279,7 +1773,185 @@ function showTeacherGrade(id, grade) {
    Attendance
 ========================= */
 
+function getTeacherScheduleCode(student) {
+
+    const t = teacher(student.teacherId);
+    const group = t?.groups?.find(g => String(g.id) === String(student.groupId));
+    return group?.schedule || "";
+
+}
+
+function getStudentGroup(student) {
+    const t = teacher(student.teacherId);
+    return t?.groups?.find(g => String(g.id) === String(student.groupId)) || null;
+}
+
+function getStudentGroupLabel(student) {
+    return getStudentGroup(student)?.name || "غير محددة";
+}
+
+function isScheduledDate(student, date) {
+
+    const code = getTeacherScheduleCode(student);
+    const schedule = SCHEDULES[code];
+
+    if (!schedule) {
+        return false;
+    }
+
+    const day = new Date(`${date}T12:00:00`).getDay();
+    return schedule.days.includes(day);
+
+}
+
+function getAttendanceDates(students, anchorDate, limit = 10) {
+
+    const dates = [];
+    const seen = new Set();
+
+    const addDate = date => {
+        if (!seen.has(date)) {
+            seen.add(date);
+            dates.push(date);
+        }
+    };
+
+    addDate(anchorDate);
+
+    const cursor = new Date(`${anchorDate}T12:00:00`);
+
+    for (let i = 0; i < 90 && dates.length < limit; i++) {
+
+        cursor.setDate(cursor.getDate() - 1);
+
+        const date = cursor.toISOString().slice(0, 10);
+
+        if (students.some(student => isScheduledDate(student, date))) {
+            addDate(date);
+        }
+
+    }
+
+    return dates;
+
+}
+
+function formatAttendanceDate(date) {
+
+    const parts = date.split("-");
+
+    if (parts.length !== 3) {
+        return date;
+    }
+
+    return `${parts[2]}/${parts[1]}`;
+
+}
+
+function getArabicWeekDay(date) {
+    const d = new Date(`${date}T12:00:00`);
+    return ARABIC_DAYS[d.getDay()];
+}
+
+function getAbsenceStreak(studentId, anchorDate) {
+
+    const student = db.students.find(item => +item.id === +studentId);
+
+    if (!student) return 0;
+
+    const cursor = new Date(`${anchorDate}T12:00:00`);
+    let streak = 0;
+    let started = false;
+
+    for (let i = 0; i < 90; i++) {
+
+        const date = cursor.toISOString().slice(0, 10);
+
+        if (isScheduledDate(student, date)) {
+
+            const status = db.attendance?.[date]?.[student.id];
+
+            if (status === false) {
+                streak++;
+                started = true;
+            } else if (status === true) {
+                break;
+            } else if (started) {
+                break;
+            }
+
+        }
+
+        cursor.setDate(cursor.getDate() - 1);
+
+    }
+
+    return streak;
+
+}
+
+function filterByAttendanceSearch(list) {
+
+    const q = uiState.attendance.search.trim().toLowerCase();
+
+    if (!q) return list;
+
+    return list.filter(student => {
+
+        const teacherName = teacher(student.teacherId)?.name || "";
+
+        const text =
+            `${student.name || ""} ${student.parentName || ""} ${student.phone || ""} ${student.grade || ""} ${teacherName} ${getStudentGroupLabel(student)} ${student.id || ""}`
+                .toLowerCase();
+
+        return text.includes(q);
+
+    });
+
+}
+
+function attendanceGroupOptions() {
+    const teacherId = uiState.attendance.teacher;
+    const grade = uiState.attendance.grade;
+    const groups = [];
+
+    db.teachers.forEach(t => {
+        if (teacherId && +t.id !== +teacherId) return;
+
+        (t.groups || []).forEach(g => {
+            if (grade && g.grade !== grade) return;
+            if (!groups.some(x => String(x.id) === String(g.id))) {
+                groups.push({ id: g.id, name: g.name, grade: g.grade });
+            }
+        });
+    });
+
+    return groups.map(g => `
+        <option value="${esc(g.id)}" ${
+            String(uiState.attendance.group) === String(g.id) ? "selected" : ""
+        }>
+            ${esc(g.name)} — ${esc(g.grade || "")}
+        </option>
+    `).join("");
+}
+
 function attendanceHTML() {
+
+    const baseList =
+        db.students.filter(student =>
+            (!uiState.attendance.teacher ||
+                +student.teacherId === +uiState.attendance.teacher) &&
+            (!uiState.attendance.grade ||
+                student.grade === uiState.attendance.grade) &&
+            (!uiState.attendance.group ||
+                String(student.groupId) === String(uiState.attendance.group))
+        );
+
+    const dates = getAttendanceDates(
+        baseList,
+        uiState.attendance.date,
+        10
+    );
 
     return `
 
@@ -1287,7 +1959,13 @@ function attendanceHTML() {
 
             <div class="card p-5">
 
-                <div class="flex flex-col md:flex-row gap-3">
+                <div class="flex flex-col xl:flex-row gap-3 w-full min-w-0">
+                    <input
+                        id="attendanceSearch"
+                        value="${esc(uiState.attendance.search)}"
+                        oninput="attendanceSearchChanged()"
+                        class="attendance-search flex-1 p-3 bg-slate-100 rounded-xl outline-none"
+                        placeholder="ابحث بالاسم أو ولي الأمر أو الهاتف أو المجموعة أو كود الطالب">
 
                     <input
                         id="date"
@@ -1296,67 +1974,71 @@ function attendanceHTML() {
                         onchange="attendanceFilterChanged()"
                         class="p-3 bg-slate-100 rounded-xl outline-none">
 
-
                     <select
                         id="atTeacher"
                         onchange="attendanceFilterChanged()"
                         class="p-3 bg-slate-100 rounded-xl outline-none">
-
-                        <option value="">
-                            كل المدرسين
-                        </option>
-
-                        ${
-                            db.teachers.map(
-                                t =>
-                                    `<option value="${t.id}"
-                                        ${
-                                            +uiState.attendance.teacher ===
-                                            +t.id
-                                                ? "selected"
-                                                : ""
-                                        }>
-                                        ${esc(t.name)}
-                                    </option>`
-                            ).join("")
-                        }
-
+                        <option value="">كل المدرسين</option>
+                        ${db.teachers.map(t =>
+                            `<option value="${t.id}" ${
+                                +uiState.attendance.teacher === +t.id ? "selected" : ""
+                            }>${esc(t.name)}</option>`
+                        ).join("")}
                     </select>
-
 
                     <select
                         id="atGrade"
                         onchange="attendanceFilterChanged()"
                         class="p-3 bg-slate-100 rounded-xl outline-none">
+                        <option value="">كل السنوات</option>
+                        ${GRADES.map(grade =>
+                            `<option value="${esc(grade)}" ${
+                                uiState.attendance.grade === grade ? "selected" : ""
+                            }>${esc(grade)}</option>`
+                        ).join("")}
+                    </select>
 
-                        <option value="">
-                            كل السنوات
-                        </option>
-
-                        ${
-                            GRADES.map(
-                                grade =>
-                                    `<option
-                                        ${
-                                            uiState.attendance.grade === grade
-                                                ? "selected"
-                                                : ""
-                                        }>
-                                        ${esc(grade)}
-                                    </option>`
-                            ).join("")
-                        }
-
+                    <select 
+                    id="atGroup" 
+                    onchange="attendanceFilterChanged()" 
+                    class="p-3 bg-slate-100 rounded-xl outline-none w-40 min-w-0 text-sm">
+                    <option value="">كل المجموعات</option> 
+                             ${attendanceGroupOptions()} 
                     </select>
 
                 </div>
 
+                <div class="mt-4 flex flex-wrap gap-2 items-center text-xs text-slate-400">
+                    <span>الحصص حسب جدول المدرس:</span>
+                    <span class="schedule-chip">السبت + الثلاثاء</span>
+                    <span class="schedule-chip">الأحد + الأربعاء</span>
+                    <span class="schedule-chip">الاثنين + الخميس</span>
+                </div>
+
             </div>
 
+            <div class="card overflow-hidden">
 
-            <div
-                id="attList"
-                class="space-y-3">
+                <div class="attendance-wrap">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th class="attendance-student">الطالب / الصف</th>
+                                ${dates.map(date => `
+                                    <th>
+                                        <div class="att-date ${date === uiState.attendance.date ? "current" : ""}">
+                                            <span class="att-date-label">${formatAttendanceDate(date)}</span>
+                                            <span class="att-date-day">${getArabicWeekDay(date)}</span>
+                                            ${date === uiState.attendance.date ? '<span class="badge bg-blue-100 text-blue-700">الحصة المختارة</span>' : ""}
+                                        </div>
+                                    </th>
+                                `).join("")}
+                            </tr>
+                        </thead>
+                        <tbody id="attRows"></tbody>
+                    </table>
+                </div>
+
             </div>
 
         </div>
@@ -1365,171 +2047,149 @@ function attendanceHTML() {
 
 }
 
-
 function attendanceFilterChanged() {
 
     uiState.attendance.date =
-        document.getElementById(
-            "date"
-        )?.value ||
-        getToday();
-
+        document.getElementById("date")?.value || getToday();
 
     uiState.attendance.teacher =
-        document.getElementById(
-            "atTeacher"
-        )?.value || "";
-
+        document.getElementById("atTeacher")?.value || "";
 
     uiState.attendance.grade =
-        document.getElementById(
-            "atGrade"
-        )?.value || "";
+        document.getElementById("atGrade")?.value || "";
 
+    uiState.attendance.group =
+        document.getElementById("atGroup")?.value || "";
+
+    render();
+
+}
+
+function attendanceSearchChanged() {
+
+    uiState.attendance.search =
+        document.getElementById("attendanceSearch")?.value || "";
 
     renderAttendance();
 
 }
 
-
 function renderAttendance() {
 
-    const container =
-        document.getElementById(
-            "attList"
+    const rows = document.getElementById("attRows");
+    if (!rows) return;
+
+    const baseList =
+        db.students.filter(student =>
+            (!uiState.attendance.teacher ||
+                +student.teacherId === +uiState.attendance.teacher) &&
+            (!uiState.attendance.grade ||
+                student.grade === uiState.attendance.grade) &&
+            (!uiState.attendance.group ||
+                String(student.groupId) === String(uiState.attendance.group))
         );
 
-    if (!container) return;
+    const list = filterByAttendanceSearch(baseList);
 
+    const dates = getAttendanceDates(
+        baseList,
+        uiState.attendance.date,
+        10
+    );
 
-    const date =
-        uiState.attendance.date;
+    rows.innerHTML =
+        list.map(student => {
 
+            const streak =
+                getAbsenceStreak(
+                    student.id,
+                    uiState.attendance.date
+                );
 
-    const teacherId =
-        uiState.attendance.teacher;
-
-
-    const grade =
-        uiState.attendance.grade;
-
-
-    const list =
-        db.students.filter(
-            student =>
-
-                (!teacherId ||
-                    +student.teacherId ===
-                    +teacherId)
-
-                &&
-
-                (!grade ||
-                    student.grade === grade)
-        );
-
-
-    container.innerHTML =
-        list.map(
-            student => {
-
-                const status =
-                    db.attendance?.[date]?.[
-                        student.id
-                    ];
-
-
-                return `
-
-                    <div class="card p-4 flex flex-wrap gap-3 items-center">
-
-                        <div class="flex-1 min-w-[220px]">
-
-                            <b>
-                                ${esc(student.name)}
-                            </b>
-
-                            <div class="text-xs text-slate-400 mt-1">
-
-                                ${esc(student.grade)}
-
-                                •
-
-                                ${esc(
-                                    teacher(
-                                        student.teacherId
-                                    )?.name || ""
-                                )}
-
-                            </div>
-
+            return `
+                <tr>
+                    <td class="attendance-student p-3">
+                        <div class="font-black">
+                            ${esc(student.name)}
                         </div>
+                        <div class="text-[10px] text-slate-400 mt-1">
+                            ${esc(student.grade)} • ${esc(getStudentGroupLabel(student))} • ${esc(teacher(student.teacherId)?.name || "غير محدد")}
+                        </div>
+                        ${streak > 0 ? `
+                            <span class="streak-badge">
+                                غائب ${streak} حصة متتالية
+                            </span>
+                        ` : ""}
+                    </td>
 
+                    ${dates.map(date => {
 
-                        <button
-                            onclick="markAttendance(${student.id},true)"
-                            class="px-4 py-2 rounded-xl font-bold action-btn ${
-                                status === true
-                                    ? "bg-green-600 text-white"
-                                    : "bg-green-50 text-green-700"
-                            }">
+                        const scheduled =
+                            isScheduledDate(student, date);
 
-                            حاضر
+                        const status =
+                            db.attendance?.[date]?.[student.id];
 
-                        </button>
+                        const isCurrent =
+                            date === uiState.attendance.date;
 
+                        return `
+                            <td class="lesson-cell ${scheduled ? "" : "unscheduled"}">
+                                ${!scheduled ? `
+                                    <span class="att-state empty">—</span>
+                                    <span class="lesson-note">لا توجد حصة</span>
+                                ` : `
+                                    <span class="att-state ${
+                                        status === true
+                                            ? "present"
+                                            : status === false
+                                                ? "absent"
+                                                : "empty"
+                                    }">
+                                        ${
+                                            status === true
+                                                ? "✓"
+                                                : status === false
+                                                    ? "✕"
+                                                    : "—"
+                                        }
+                                    </span>
 
-                        <button
-                            onclick="markAttendance(${student.id},false)"
-                            class="px-4 py-2 rounded-xl font-bold action-btn ${
-                                status === false
-                                    ? "bg-red-600 text-white"
-                                    : "bg-red-50 text-red-700"
-                            }">
+                                    ${isCurrent ? `
+                                        <div class="att-edit">
+                                            <button
+                                                onclick="markAttendance(${student.id},true)"
+                                                class="att-mini present ${status === true ? "active" : ""}"
+                                                title="حاضر">✓</button>
+                                            <button
+                                                onclick="markAttendance(${student.id},false)"
+                                                class="att-mini absent ${status === false ? "active" : ""}"
+                                                title="غائب">✕</button>
+                                        </div>
+                                    ` : ""}
+                                `}
+                            </td>
+                        `;
 
-                            غائب
+                    }).join("")}
+                </tr>
+            `;
 
-                        </button>
-
-
-                        ${
-                            status === false
-
-                                ? `
-
-                                    <button
-                                        onclick="absenceMessage(${student.id})"
-                                        class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold action-btn">
-
-                                        <i class="fa-brands fa-whatsapp ml-1"></i>
-                                        إرسال رسالة الغياب
-
-                                    </button>
-
-                                `
-
-                                : ""
-                        }
-
-                    </div>
-
-                `;
-
-            }
-        ).join("")
+        }).join("")
         ||
         `
-
-        <div class="card p-10 text-center text-slate-400">
-
-            لا يوجد طلاب مطابقون للفلاتر
-
-        </div>
-
+            <tr>
+                <td colspan="${dates.length + 1}" class="p-10 text-center text-slate-400">
+                    ${
+                        baseList.length
+                            ? "لا توجد نتائج مطابقة للبحث"
+                            : "لا يوجد طلاب مطابقون للفلاتر"
+                    }
+                </td>
+            </tr>
         `;
 
 }
-
 
 async function markAttendance(
     id,
@@ -1537,21 +2197,78 @@ async function markAttendance(
 ) {
 
     const date =
-        uiState.attendance.date;
-
+        uiState.attendance.date ||
+        getToday();
 
     db.attendance ||= {};
     db.attendance[date] ||= {};
 
-
     db.attendance[date][id] =
         status;
 
+    saveLocal();
 
-    await saveDatabase();
+    if (firebaseReady) {
 
+        try {
+
+            await set(
+                databaseRef,
+                db
+            );
+
+            setFirebaseStatus(
+                true,
+                "متصل بـ Firebase"
+            );
+
+        } catch(error) {
+
+            console.error(
+                "Attendance save error:",
+                error
+            );
+
+            setFirebaseStatus(
+                false,
+                "خطأ في الحفظ"
+            );
+
+            Swal.fire({
+                icon: "error",
+                title: "تعذر الحفظ",
+                text:
+                    "لم يتم حفظ الحضور على Firebase."
+            });
+
+            return;
+
+        }
+
+    }
 
     renderAttendance();
+
+    // بعد تسجيل الغياب، اسأل المستخدم أولًا هل يريد التواصل مع ولي الأمر
+    if (status === false) {
+        const student = db.students.find(
+            item => +item.id === +id
+        );
+
+        const result = await Swal.fire({
+            icon: "warning",
+            title: "تم تسجيل الغياب",
+            text: `هل تريد التواصل مع ولي أمر ${student?.name || "الطالب"}؟`,
+            showCancelButton: true,
+            confirmButtonText: "تواصل مع ولي الأمر",
+            cancelButtonText: "لاحقًا",
+            confirmButtonColor: "#16a34a"
+        });
+
+        if (result.isConfirmed) {
+            absenceMessage(id, date);
+        }
+    }
 
 }
 
@@ -1560,57 +2277,120 @@ async function markAttendance(
    WhatsApp
 ========================= */
 
-function absenceMessage(id) {
+
+function normalizeEgyptPhone(phone) {
+
+    let value = String(phone || "").replace(/\D/g, "");
+
+    if (value.startsWith("0020")) {
+        value = value.slice(2);
+    }
+
+    if (value.startsWith("20")) {
+        return value;
+    }
+
+    if (value.startsWith("0")) {
+        return "20" + value.slice(1);
+    }
+
+    return value;
+
+}
+
+
+function parentWhatsApp(id) {
 
     const student =
         db.students.find(
             item => +item.id === +id
         );
 
-
     if (!student) return;
 
-
     if (!student.phone) {
-
         Swal.fire(
             "تنبيه",
             "رقم ولي الأمر غير مسجل",
             "warning"
         );
-
         return;
-
     }
 
+    const phone = normalizeEgyptPhone(student.phone);
 
-    const date =
-        uiState.attendance.date ||
-        getToday();
-
+    if (!phone) {
+        Swal.fire(
+            "تنبيه",
+            "رقم ولي الأمر غير صالح",
+            "warning"
+        );
+        return;
+    }
 
     const message =
-`السيد/ة ولي أمر الطالب ${student.name}،
+`السيد/ة ${student.parentName || "ولي أمر"}،
 
-نحيط سيادتكم علمًا بأن الطالب لم يحضر إلى الحصة اليوم ${new Date(date).toLocaleDateString("ar-EG")}.
-
-نرجو التواصل معنا في حال وجود أي عذر أو استفسار.
+مرحبًا، نود التواصل معكم بخصوص الطالب ${student.name}.
 
 مع خالص التحية،
 إدارة السنتر 4U`;
 
+    window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        "_blank"
+    );
 
-    let phone =
-        String(student.phone).replace(
-            /\D/g,
-            ""
+}
+
+
+function absenceMessage(id, absenceDate = null) {
+
+    const student =
+        db.students.find(
+            item => +item.id === +id
         );
 
+    if (!student) return;
 
-    if (phone.startsWith("01")) {
-        phone = "2" + phone;
+    if (!student.phone) {
+        Swal.fire(
+            "تنبيه",
+            "رقم ولي الأمر غير مسجل",
+            "warning"
+        );
+        return;
     }
 
+    const date =
+        absenceDate ||
+        uiState.attendance.date ||
+        getToday();
+
+    const dateText =
+        new Date(`${date}T00:00:00`).toLocaleDateString("ar-EG");
+
+    const message =
+`السيد/ة ولي أمر الطالب ${student.name}،
+
+نحيطكم علمًا أن ابنكم ${student.name} غاب في يوم ${dateText}.
+
+مع خالص التحية،
+سنتر فور يو`;
+
+    const phone =
+        normalizeEgyptPhone(
+            student.phone
+        );
+
+    if (!phone) {
+        Swal.fire(
+            "تنبيه",
+            "رقم ولي الأمر غير صالح",
+            "warning"
+        );
+        return;
+    }
 
     window.open(
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -1630,9 +2410,16 @@ function paymentsHTML() {
 
         <div class="space-y-5">
 
-            <div class="card p-5">
+            <div class="card p-5 w-full max-w-none">
 
-                <div class="flex flex-col md:flex-row gap-3">
+                <div class="flex flex-col xl:flex-row gap-3 w-full">
+
+                    <input
+                        id="paymentSearch"
+                        value="${esc(uiState.payments.search)}"
+                        oninput="paymentSearchChanged()"
+                        class="p-3 bg-slate-100 rounded-xl flex-1 outline-none"
+                        placeholder="ابحث بالاسم أو ولي الأمر أو الهاتف أو المجموعة أو كود الطالب">
 
                     <input
                         id="paymentMonth"
@@ -1716,6 +2503,15 @@ function paymentsHTML() {
 }
 
 
+function paymentSearchChanged() {
+
+    uiState.payments.search =
+        document.getElementById("paymentSearch")?.value || "";
+
+    renderPayments();
+
+}
+
 function paymentFilterChanged() {
 
     uiState.payments.month =
@@ -1773,7 +2569,7 @@ function renderPayments() {
         uiState.payments.grade;
 
 
-    const list =
+    const baseList =
         db.students.filter(
             student =>
 
@@ -1786,6 +2582,32 @@ function renderPayments() {
                 (!grade ||
                     student.grade === grade)
         );
+
+    const search =
+        uiState.payments.search
+            .trim()
+            .toLowerCase();
+
+    const list =
+        baseList.filter(student => {
+
+            if (!search) {
+                return true;
+            }
+
+            const teacherName =
+                teacher(student.teacherId)?.name || "";
+
+            const text =
+                `${student.name || ""} ${
+                    student.parentName || ""
+                } ${student.phone || ""} ${
+                    student.grade || ""
+                } ${teacherName} ${getStudentGroupLabel(student)}`.toLowerCase();
+
+            return text.includes(search);
+
+        });
 
 
     const paid =
@@ -1867,6 +2689,10 @@ function renderPayments() {
                             <div class="text-xs text-slate-400 mt-1">
 
                                 ${esc(student.grade)}
+
+                                •
+
+                                ${esc(getStudentGroupLabel(student))}
 
                                 •
 
@@ -1977,6 +2803,95 @@ async function markPayment(
    Teachers CRUD
 ========================= */
 
+let teacherGroupDraft = [];
+
+function teacherGroupRowHTML(group = {}, index = 0) {
+    return `
+        <div class="teacher-group-row" data-index="${index}" style="border:1px solid #e2e8f0;border-radius:14px;padding:10px;margin-bottom:10px;text-align:right">
+            <input type="hidden" class="teacher-group-id" value="${esc(group.id || "")}">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <select class="teacher-group-grade swal2-input" style="margin:0;width:100%;font-size:12px;padding:7px 10px">
+                    <option value="">اختر السنة</option>
+                    ${GRADES.map(grade => `<option value="${esc(grade)}" ${group.grade === grade ? "selected" : ""}>${esc(grade)}</option>`).join("")}
+                </select>
+                <input class="teacher-group-name swal2-input" style="margin:0;width:100%;font-size:12px;padding:7px 10px" value="${esc(group.name || `مجموعة ${index + 1}`)}" placeholder="اسم المجموعة">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                <select class="teacher-group-schedule swal2-input" style="margin:0;width:100%;font-size:12px;padding:7px 10px">
+                    <option value="">اختر الأيام</option>
+                    ${Object.entries(SCHEDULES).map(([code,item]) => `<option value="${code}" ${group.schedule === code ? "selected" : ""}>${esc(item.label)}</option>`).join("")}
+                </select>
+                <input type="time" class="teacher-group-time swal2-input" style="margin:0;width:100%;font-size:12px;padding:7px 10px" value="${esc(group.time || "")}">
+            </div>
+            <button type="button" onclick="removeTeacherGroupRow(this)" class="swal2-styled" style="background:#fee2e2;color:#dc2626;margin:8px 0 0;padding:7px 12px;font-size:11px">حذف المجموعة</button>
+        </div>
+    `;
+}
+
+function collectTeacherGroupDraft() {
+    return [...document.querySelectorAll(".teacher-group-row")].map(row => ({
+        id: row.querySelector(".teacher-group-id")?.value || "",
+        grade: row.querySelector(".teacher-group-grade")?.value || "",
+        name: row.querySelector(".teacher-group-name")?.value.trim() || "",
+        schedule: row.querySelector(".teacher-group-schedule")?.value || "",
+        time: row.querySelector(".teacher-group-time")?.value || ""
+    }));
+}
+
+function renderTeacherGroupRows() {
+    const box = document.getElementById("teacherGroupsBox");
+    if (!box) return;
+    box.innerHTML = teacherGroupDraft.map((g,index) => teacherGroupRowHTML(g,index)).join("");
+}
+
+function addTeacherGroupRow() {
+    teacherGroupDraft = collectTeacherGroupDraft();
+    teacherGroupDraft.push({ id: "", name: `مجموعة ${teacherGroupDraft.length + 1}`, grade: "", schedule: "", time: "" });
+    renderTeacherGroupRows();
+}
+
+function removeTeacherGroupRow(button) {
+    teacherGroupDraft = collectTeacherGroupDraft();
+    const index = [...document.querySelectorAll(".teacher-group-row")].indexOf(button.closest(".teacher-group-row"));
+    if (index >= 0) teacherGroupDraft.splice(index, 1);
+    renderTeacherGroupRows();
+}
+
+function teacherGroupEditor(selected = []) {
+    teacherGroupDraft = Array.isArray(selected) && selected.length
+        ? selected.map(g => ({...g}))
+        : [{ id: "", name: "مجموعة 1", grade: "", schedule: "", time: "" }];
+
+    return `
+        <div style="text-align:right;margin-top:12px">
+            <div style="font-weight:900;margin-bottom:8px">مجموعات المدرس</div>
+            <div style="font-size:11px;color:#64748b;margin-bottom:10px">كل مجموعة لها سنة مستقلة وطلابها وأيامها ووقت الحصة.</div>
+            <div id="teacherGroupsBox" style="max-height:380px;overflow:auto;padding:4px">
+                ${teacherGroupDraft.map((g,index) => teacherGroupRowHTML(g,index)).join("")}
+            </div>
+            <button type="button" onclick="addTeacherGroupRow()" class="swal2-styled" style="background:#2563eb;margin:8px 0 0">+ إضافة مجموعة</button>
+        </div>
+    `;
+}
+
+function readTeacherGroups() {
+    const rows = collectTeacherGroupDraft();
+    const groups = [];
+
+    rows.forEach((g,index) => {
+        if (!g.grade) return;
+        groups.push({
+            id: g.id || uid(),
+            name: g.name || `مجموعة ${index + 1}`,
+            grade: g.grade,
+            schedule: g.schedule,
+            time: g.time
+        });
+    });
+
+    return groups;
+}
+
 async function addTeacher() {
 
     const result =
@@ -1985,89 +2900,52 @@ async function addTeacher() {
             title: "إضافة مدرس",
 
             html: `
-
-                <input
-                    id="teacherName"
-                    class="swal2-input"
-                    placeholder="اسم المدرس">
-
-                <input
-                    id="teacherSubject"
-                    class="swal2-input"
-                    placeholder="المادة">
-
+                <input id="teacherName" class="swal2-input" placeholder="اسم المدرس">
+                <input id="teacherSubject" class="swal2-input" placeholder="المادة">
+                ${teacherGroupEditor()}
             `,
 
+            width: 650,
             showCancelButton: true,
-
             confirmButtonText: "إضافة",
-
             cancelButtonText: "إلغاء",
 
             preConfirm: () => {
 
                 const name =
-                    document.getElementById(
-                        "teacherName"
-                    ).value.trim();
-
+                    document.getElementById("teacherName").value.trim();
 
                 if (!name) {
-
-                    Swal.showValidationMessage(
-                        "اكتب اسم المدرس"
-                    );
-
+                    Swal.showValidationMessage("اكتب اسم المدرس");
                     return false;
-
                 }
 
-
                 return {
-
                     name,
-
-                    subject:
-                        document.getElementById(
-                            "teacherSubject"
-                        ).value.trim()
-
+                    subject: document.getElementById("teacherSubject").value.trim(),
+                    groups: readTeacherGroups()
                 };
 
             }
 
         });
 
-
-    if (!result.isConfirmed) {
-        return;
-    }
-
+    if (!result.isConfirmed) return;
 
     db.teachers.push({
-
         id: uid(),
-
         ...result.value
-
     });
 
-
     await saveDatabase();
-
     render();
 
 }
 
-
 async function editTeacher(id) {
 
-    const t =
-        teacher(id);
-
-
+    const t = teacher(id);
     if (!t) return;
-
 
     const result =
         await Swal.fire({
@@ -2075,55 +2953,50 @@ async function editTeacher(id) {
             title: "تعديل المدرس",
 
             html: `
-
-                <input
-                    id="teacherName"
-                    class="swal2-input"
-                    value="${esc(t.name)}">
-
-                <input
-                    id="teacherSubject"
-                    class="swal2-input"
-                    value="${esc(t.subject || "")}">
-
+                <input id="teacherName" class="swal2-input" value="${esc(t.name)}">
+                <input id="teacherSubject" class="swal2-input" value="${esc(t.subject || "")}">
+                ${teacherGroupEditor(t.groups || [])}
             `,
 
+            width: 650,
             showCancelButton: true,
-
             confirmButtonText: "حفظ",
-
             cancelButtonText: "إلغاء",
 
             preConfirm: () => ({
-
-                name:
-                    document.getElementById(
-                        "teacherName"
-                    ).value.trim(),
-
-                subject:
-                    document.getElementById(
-                        "teacherSubject"
-                    ).value.trim()
-
+                name: document.getElementById("teacherName").value.trim(),
+                subject: document.getElementById("teacherSubject").value.trim(),
+                groups: readTeacherGroups()
             })
 
         });
 
+    if (!result.isConfirmed) return;
 
-    if (!result.isConfirmed) {
-        return;
-    }
+    const oldGroupIds = new Set((t.groups || []).map(g => String(g.id)));
 
+    Object.assign(t, result.value);
 
-    Object.assign(
-        t,
-        result.value
-    );
+    // Keep students attached to a valid group after groups are edited.
+    const validGroups = t.groups || [];
+    db.students
+        .filter(student => +student.teacherId === +t.id)
+        .forEach(student => {
+            let group = validGroups.find(g => String(g.id) === String(student.groupId));
 
+            if (!group) {
+                group = validGroups.find(g => g.grade === student.grade);
+            }
+
+            if (group) {
+                student.groupId = group.id;
+                student.grade = group.grade;
+            } else {
+                student.groupId = "";
+            }
+        });
 
     await saveDatabase();
-
     render();
 
 }
@@ -2166,6 +3039,7 @@ async function deleteTeacher(id) {
 
             if (+student.teacherId === +id) {
                 student.teacherId = "";
+                student.groupId = "";
             }
 
         }
@@ -2182,6 +3056,25 @@ async function deleteTeacher(id) {
 /* =========================
    Teacher Options
 ========================= */
+
+function groupOptions(teacherId = "", grade = "", selected = "") {
+    const t = teacher(teacherId);
+    const groups = (t?.groups || []).filter(g => !grade || g.grade === grade);
+    return groups.map(g => `
+        <option value="${esc(g.id)}" ${String(g.id) === String(selected) ? "selected" : ""}>
+            ${esc(g.name)} — ${esc(g.grade)} — ${esc(SCHEDULES[g.schedule]?.label || "الأيام غير محددة")}
+            ${g.time ? ` — ${esc(g.time)}` : ""}
+        </option>
+    `).join("");
+}
+
+function updateStudentGroups(selected = "") {
+    const teacherId = document.getElementById("studentTeacher")?.value || "";
+    const grade = document.getElementById("studentGrade")?.value || "";
+    const select = document.getElementById("studentGroup");
+    if (!select) return;
+    select.innerHTML = `<option value="">اختر المجموعة</option>${groupOptions(teacherId, grade, selected)}`;
+}
 
 function teacherOptions(
     selected = ""
@@ -2252,7 +3145,8 @@ async function addStudent() {
 
                 <select
                     id="studentGrade"
-                    class="swal2-input">
+                    class="swal2-input"
+                    onchange="updateStudentGroups()">
 
                     <option value="">
                         اختر السنة الدراسية
@@ -2272,7 +3166,8 @@ async function addStudent() {
 
                 <select
                     id="studentTeacher"
-                    class="swal2-input">
+                    class="swal2-input"
+                    onchange="updateStudentGroups()">
 
                     <option value="">
                         اختر المدرس
@@ -2280,6 +3175,12 @@ async function addStudent() {
 
                     ${teacherOptions()}
 
+                </select>
+
+                <select
+                    id="studentGroup"
+                    class="swal2-input">
+                    <option value="">اختر المجموعة</option>
                 </select>
 
             `,
@@ -2309,15 +3210,20 @@ async function addStudent() {
                         "studentTeacher"
                     ).value;
 
+                const groupId =
+                    document.getElementById(
+                        "studentGroup"
+                    ).value;
 
                 if (
                     !name ||
                     !grade ||
-                    !teacherId
+                    !teacherId ||
+                    !groupId
                 ) {
 
                     Swal.showValidationMessage(
-                        "أكمل البيانات الأساسية"
+                        "أكمل البيانات الأساسية واختر المجموعة"
                     );
 
                     return false;
@@ -2341,7 +3247,9 @@ async function addStudent() {
 
                     grade,
 
-                    teacherId
+                    teacherId,
+
+                    groupId
 
                 };
 
@@ -2408,7 +3316,8 @@ async function editStudent(id) {
 
                 <select
                     id="studentGrade"
-                    class="swal2-input">
+                    class="swal2-input"
+                    onchange="updateStudentGroups()">
 
                     ${
                         GRADES.map(
@@ -2429,12 +3338,20 @@ async function editStudent(id) {
 
                 <select
                     id="studentTeacher"
-                    class="swal2-input">
+                    class="swal2-input"
+                    onchange="updateStudentGroups()">
 
                     ${teacherOptions(
                         student.teacherId
                     )}
 
+                </select>
+
+                <select
+                    id="studentGroup"
+                    class="swal2-input">
+                    <option value="">اختر المجموعة</option>
+                    ${groupOptions(student.teacherId, student.grade, student.groupId)}
                 </select>
 
             `,
@@ -2470,6 +3387,11 @@ async function editStudent(id) {
                 teacherId:
                     document.getElementById(
                         "studentTeacher"
+                    ).value,
+
+                groupId:
+                    document.getElementById(
+                        "studentGroup"
                     ).value
 
             })
@@ -2574,11 +3496,20 @@ window.studentSearchChanged =
 window.studentFilterChanged =
     studentFilterChanged;
 
+window.teacherSearchChanged =
+    teacherSearchChanged;
+
 window.attendanceFilterChanged =
     attendanceFilterChanged;
 
+window.attendanceSearchChanged =
+    attendanceSearchChanged;
+
 window.paymentFilterChanged =
     paymentFilterChanged;
+
+window.paymentSearchChanged =
+    paymentSearchChanged;
 
 window.renderAttendance =
     renderAttendance;
@@ -2613,8 +3544,26 @@ window.markPayment =
 window.absenceMessage =
     absenceMessage;
 
+window.parentWhatsApp =
+    parentWhatsApp;
+
 window.showTeacherGrade =
     showTeacherGrade;
+
+window.showTeacherGroup =
+    showTeacherGroup;
+
+window.addTeacherGroupRow =
+    addTeacherGroupRow;
+
+window.removeTeacherGroupRow =
+    removeTeacherGroupRow;
+
+window.updateStudentGroups =
+    updateStudentGroups;
+
+window.checkPassword =
+    checkPassword;
 
 
 /* =========================
@@ -2624,6 +3573,8 @@ window.showTeacherGrade =
 saveLocal();
 
 render();
+
+initializeLogin();
 
 initializeFirebase();
 
